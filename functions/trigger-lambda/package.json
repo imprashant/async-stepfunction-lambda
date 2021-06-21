@@ -1,0 +1,14 @@
+{
+  "name": "trigger-lambda",
+  "version": "1.0.0",
+  "description": "lambda function to trigger stepfuntion",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "imprashantm@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.931.0"
+  }
+}
