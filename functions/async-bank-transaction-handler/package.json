@@ -1,0 +1,22 @@
+{
+  "name": "bank_transaction_handler",
+  "version": "1.0.0",
+  "description": "Mock bank transaction handler for NodeJS",
+  "main": "app.js",
+  "repository": "TODO",
+  "author": "SAM CLI",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.932.0"
+  },
+  "scripts": {
+    "test": "mocha tests/unit/"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^8.2.1",
+    "sinon": "^11.1.1",
+    "sinon-chai": "^3.7.0"
+  }
+}

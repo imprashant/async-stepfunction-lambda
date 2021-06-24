@@ -15,6 +15,7 @@ Resources:
         StockSellerFunctionArn: !GetAtt StockSellerFunction.Arn
         StockBuyerFunctionArn: !GetAtt StockBuyerFunction.Arn
         OutputQueueUrl: !Ref OutputQueue
+        BankTransactionInputQueueUrl: !Ref BankTransactionInputQueue
       Name: "AsyncStockTradingStateMachine"
       Policies: # Find out more about SAM policy templates: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
         - LambdaInvokePolicy:
@@ -25,6 +26,8 @@ Resources:
             FunctionName: !Ref StockBuyerFunction
         - SQSSendMessagePolicy:
             QueueName: !GetAtt OutputQueue.QueueName
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt BankTransactionInputQueue.QueueName
   
   TriggerFunction:
     Type: AWS::Serverless::Function
@@ -82,6 +85,38 @@ Resources:
       FunctionName: StockBuyerFunctionForAsyncFlow
       Handler: app.lambdaHandler
       Runtime: nodejs14.x
+
+  BankTransactionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+      CodeUri: functions/async-bank-transaction-handler
+      FunctionName: BankTransactionFunction
+      Events:
+        MySQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt BankTransactionInputQueue.Arn
+            BatchSize: 1
+      Policies:
+        - Statement:
+          - Sid: StepfunctionSuccessFailurePolicy
+            Effect: Allow
+            Action:
+            - states:SendTaskSuccess
+            - states:SendTaskFailure
+            Resource: '*'
+  
+  BankTransactionInputQueue:
+    Type: AWS::SQS::Queue
+    Properties: 
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt BankTransactionInputDLQ.Arn
+        maxReceiveCount: 3
+  
+  BankTransactionInputDLQ:
+    Type: AWS::SQS::Queue
 
 Outputs:
   # StockTradingStateMachineHourlyTradingSchedule is an implicit Schedule event rule created out of Events key under Serverless::StateMachine

@@ -31,14 +31,27 @@
                     "BackoffRate": 1
                 }
             ],
-            "Next": "Send output"
+            "Next": "Send message to Bank transaction queue"
         },
         "Buy Stock": {
             "Type": "Task",
             "Resource": "${StockBuyerFunctionArn}",
-            "Next": "Send output"
+            "Next": "Send message to Bank transaction queue"
         },
-        "Send output": {
+        "Send message to Bank transaction queue": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+            "Parameters": {
+                "QueueUrl": "${BankTransactionInputQueueUrl}",
+                "MessageBody": {
+                    "input.$": "$",
+                    "taskToken.$": "$$.Task.Token"
+                }
+            },
+            "ResultPath": "$.trasactionResult",
+            "Next": "Send output to queue"
+        },
+        "Send output to queue": {
             "Type": "Task",
             "Resource": "arn:aws:states:::sqs:sendMessage",
             "Parameters": {
