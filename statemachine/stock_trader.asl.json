@@ -59,11 +59,17 @@
                 "MessageBody.$": "$"
             },
             "ResultPath": null,
+            "Next": "Send output to external api"
+        },
+        "Send output to external api": {
+            "Type": "Task",
+            "Resource": "${ApiCallerFunctionArn}",
+            "ResultPath": "$.apiResult",
             "Next": "End"
         },
         "End": {
             "Type": "Pass",
-            "ResultPath": "$.result",
+            "OutputPath": "$.apiResult",
             "End": true
         }
     }

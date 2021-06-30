@@ -14,6 +14,7 @@ Resources:
         StockCheckerFunctionArn: !GetAtt StockCheckerFunction.Arn
         StockSellerFunctionArn: !GetAtt StockSellerFunction.Arn
         StockBuyerFunctionArn: !GetAtt StockBuyerFunction.Arn
+        ApiCallerFunctionArn: !GetAtt ApiCallerFunction.Arn
         OutputQueueUrl: !Ref OutputQueue
         BankTransactionInputQueueUrl: !Ref BankTransactionInputQueue
       Name: "AsyncStockTradingStateMachine"
@@ -23,7 +24,9 @@ Resources:
         - LambdaInvokePolicy:
             FunctionName: !Ref StockSellerFunction
         - LambdaInvokePolicy:
-            FunctionName: !Ref StockBuyerFunction
+            FunctionName: !Ref StockBuyerFunction 
+        - LambdaInvokePolicy:
+            FunctionName: !Ref ApiCallerFunction
         - SQSSendMessagePolicy:
             QueueName: !GetAtt OutputQueue.QueueName
         - SQSSendMessagePolicy:
@@ -117,6 +120,14 @@ Resources:
   
   BankTransactionInputDLQ:
     Type: AWS::SQS::Queue
+  
+  ApiCallerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/api-caller/
+      FunctionName: ApiCaller
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
 
 Outputs:
   # StockTradingStateMachineHourlyTradingSchedule is an implicit Schedule event rule created out of Events key under Serverless::StateMachine

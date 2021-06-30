@@ -1,0 +1,17 @@
+{
+  "name": "api-caller",
+  "version": "1.0.0",
+  "description": "lambda to call external api",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest tests/"
+  },
+  "author": "imprashantm@gmail.com",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^27.0.6"
+  },
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}
